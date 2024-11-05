@@ -1,0 +1,259 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<process.h>
+
+
+struct Node
+{
+	struct Node *prev;
+	int ele;
+	struct Node *next;
+};
+
+struct Node *first, *last;
+
+void insert_node()
+{
+	struct Node *nn, *temp, *temp2;
+	int ch, sele;
+
+	nn = (struct Node *) malloc(sizeof(struct Node) );
+	printf("Enter element for New Node : ");
+	scanf("%d", &nn->ele);
+
+	if(first == NULL)
+	{
+		nn->next = NULL;
+		nn->prev = NULL;
+		first = nn;
+		last = nn;
+		printf("List Created..\n");
+	}
+	else
+	{
+		// means list is already created.
+		printf("Where you want to place this new node? \n");
+		printf("1 - At First Position\n");
+		printf("2 - At Last Position\n");
+		printf("3 - At Specific Position\n");
+		printf("Provide your choice : ");
+		scanf("%d", &ch);
+
+		switch(ch)
+		{
+			case 1: // insert nn at first position
+				nn->prev = NULL;
+				nn->next = first;
+				first->prev = nn;
+				first = nn;
+				printf("New Node is inserted at first position\n");
+				break;
+			case 2: // insert nn at last position
+				nn->next = NULL;
+				nn->prev = last;
+				last->next =nn;
+				last = nn;
+				printf("New Node is inserted at last position\n");
+				break;
+			case 3: // insert nn after specified node
+				printf("Enter element of that node, after which you want to place NN : ");
+				scanf("%d", &sele);
+				temp = first;
+				while(temp->ele != sele && temp!=NULL)
+				{
+					temp = temp->next;
+				}
+
+				if(temp==NULL)
+				{
+					printf("No such node found.\n");
+				}
+				else
+				{
+					// means selected node found.
+					// "temp" points to selected node.
+					if(temp==last)
+					{
+					  // means selected node is last node
+					  nn->next = NULL;
+					  nn->prev = last;
+					  last->next = nn;
+					  last = nn;
+					  printf("NN inserted after specified Node.\n");
+					}
+					else
+					{
+					  // means selected node is other than last node
+					  temp2 = temp->next;
+					  nn->prev = temp;
+					  nn->next = temp2;
+					  temp->next = nn;
+					  temp2->prev = nn;
+					  printf("NN inserted after specified Node.\n");
+					} // end of inner else
+				} //end of innter else
+				break;
+		} //end of switch-case
+	} //end of outer else
+} //end of insert_node()
+
+void remove_node()
+{
+	int ch, sele;
+	struct Node *temp, *temp2, *temp3;
+
+	if(first == NULL)
+	{
+		printf("List Underflow. Yet Not created.\n");
+	}
+	else
+	{
+		// means list is already created...
+		if(first == last)
+		{
+			// means there is only one node.
+			temp = first;
+			first = NULL;
+			last = NULL;
+			free(temp);
+			printf("There was only one node. It is not removed.\n");
+		}
+		else
+		{
+		  // means there are multiple nodes.
+		  printf("Which node you want to remove : \n");
+		  printf("1 - Remove First Node\n");
+		  printf("2 - Remove Last Node\n");
+		  printf("3 - Remove Specific Node\n");
+		  printf("Provide your choice : ");
+		  scanf("%d", &ch);
+		  switch(ch)
+		  {
+		    case 1: // remove first node
+			temp = first;
+			first = first->next;
+			first->prev = NULL;
+			free(temp);
+			printf("First Node is Removed.\n");
+			break;
+		    case 2: // remove last node
+			temp = last;
+			last = last->prev;
+			last->next = NULL;
+			free(temp);
+			printf("Last Node is Removed.\n");
+			break;
+		    case 3: // remove specific node
+			printf("Enter element of that node, which you want to Remove : ");
+			scanf("%d", &sele);
+
+			temp = first;
+			while(temp->ele != sele && temp!=NULL)
+			{
+				temp = temp->next;
+			}
+
+			if(temp==NULL)
+			{
+				printf("No such node found.\n");
+			}
+			else
+			{
+			  // means selected node found. "temp" points to it.
+			  if(temp==first)
+			  {
+			    // means selected node "temp" is first node
+			    temp = first;
+			    first = first->next;
+			    first->prev = NULL;
+			    free(temp);
+			    printf("Specified Node is Removed.\n");
+			  }
+			  else if(temp == last)
+			  {
+			    // means selected node "temp" is last node
+			    temp = last;
+			    last = last->prev;
+			    last -> next = NULL;
+			    free(temp);
+			    printf("Specified Node is Removed.\n");
+			  }
+			  else
+			  {
+			    // means selected node is in-between
+			    temp2 = temp->prev;
+			    temp3 = temp->next;
+			    temp2->next = temp3;
+			    temp3->prev = temp2;
+			    free(temp);
+			    printf("Specified Node is Removed.\n");
+			  }
+			}
+			break;
+		  } //end of swith-case
+		} //end of inner else
+	} //end of outer else
+} //end of remove_node()
+
+void display_list()
+{
+	struct Node *temp;
+	if(first == NULL)
+	{
+	  printf("List is yet not created. Nothing to display.\n");
+	}
+	else
+	{
+	  printf("List Contains\n");
+	  temp = first;
+	  while(temp!=NULL)
+	  {
+		printf("%d\t", temp->ele);
+		temp = temp->next;
+	  }
+	}
+} //end of display_list()
+
+void main()
+{
+	int ch;
+	clrscr();
+	first = NULL;
+	last = NULL;
+
+	while(1)
+	{
+		getch();
+		clrscr();
+		printf("Select operation\n");
+		printf("1 - Insert Node\n");
+		printf("2 - Remove Node\n");
+		printf("3 - Display List\n");
+		printf("4 - EXIT\n");
+		printf("Provide your choice : ");
+		scanf("%d", &ch);
+
+		switch(ch)
+		{
+			case 1: insert_node();
+				break;
+			case 2: remove_node();
+				break;
+			case 3: display_list();
+				break;
+			case 4: exit(0);
+		} //end of switch-case
+	} //end of while
+
+	getch();
+
+}
+
+
+
+
+
+
+
+
